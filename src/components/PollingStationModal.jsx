@@ -6,7 +6,9 @@ const PollingStationModal = ({
   onClose, 
   station, 
   onSubmit,
-  themeClasses 
+  themeClasses,
+  language, 
+  translations 
 }) => {
   const [regionsData, setRegionsData] = useState(null);
   const [formData, setFormData] = useState({
@@ -17,8 +19,12 @@ const PollingStationModal = ({
     statut: station?.statut?.toLowerCase() || 'actif',
     region: station?.region || '',
     departement: station?.departement || '',
-    arrondissement: station?.arrondissement || ''
+    arrondissement: station?.arrondissement || '',
+    latitude: station?.latitude || '',
+    longitude: station?.longitude || ''
   });
+  const t = translations.modal;
+  const tr = translations.status;
 
   useEffect(() => {
     const loadRegions = async () => {
@@ -71,7 +77,7 @@ const PollingStationModal = ({
           {/* Centre de Vote */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Centre de vote
+              {t.votingCenterName}
             </label>
             <input
               type="text"
@@ -86,7 +92,7 @@ const PollingStationModal = ({
           {/* Nom */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Nom du bureau de vote
+              {t.pollingStationName}
             </label>
             <input
               type="text"
@@ -98,11 +104,43 @@ const PollingStationModal = ({
             />
           </div>
 
-          {/* Rest of the form fields remain the same */}
+          {/* Coordonnées géographiques */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={`block text-left mb-1 ${themeClasses.text}`}>
+                {t.latitude}
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={formData.latitude}
+                onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                className={`w-full px-3 py-2 rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} ${themeClasses.text}`}
+                placeholder="Ex: 3.8667"
+                required
+              />
+            </div>
+            <div>
+              <label className={`block text-left mb-1 ${themeClasses.text}`}>
+                {t.longitude}
+              </label>
+              <input
+                type="number"
+                step="any"
+                value={formData.longitude}
+                onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                className={`w-full px-3 py-2 rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} ${themeClasses.text}`}
+                placeholder="Ex: 11.5167"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Previous form fields remain unchanged */}
           {/* Région */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Région
+              {t.region}
             </label>
             <select
                 value={formData.region}
@@ -114,7 +152,7 @@ const PollingStationModal = ({
                 })}
                 className={`w-full px-3 py-2 rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} ${themeClasses.text}`}
                 >
-                <option value="">Sélectionnez une région</option>
+                <option value="">{t.selectRegion}</option>
                 {Array.isArray(regionsData) && regionsData.map((region) => (
                     <option key={region.region} value={region.region}>
                     {region.region}
@@ -123,10 +161,11 @@ const PollingStationModal = ({
                 </select>
           </div>
 
-          {/* Département */}
+          {/* Rest of form fields... */}
+          {/* Département, Arrondissement, Capacité, Statut remain unchanged */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Département
+              {t.department}
             </label>
             <select
               value={formData.departement}
@@ -138,7 +177,7 @@ const PollingStationModal = ({
               className={`w-full px-3 py-2 rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} ${themeClasses.text}`}
               disabled={!formData.region}
             >
-              <option value="">Sélectionnez un département</option>
+              <option value="">{t.selectDepartment}</option>
                 {Array.isArray(getDepartements()) && getDepartements().map((dept) => (
                     <option key={dept.name} value={dept.name}>
                     {dept.name}
@@ -147,10 +186,9 @@ const PollingStationModal = ({
             </select>
           </div>
 
-          {/* Arrondissement */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Arrondissement
+              {t.district}
             </label>
             <select
               value={formData.arrondissement}
@@ -158,7 +196,7 @@ const PollingStationModal = ({
               className={`w-full px-3 py-2 rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} ${themeClasses.text}`}
               disabled={!formData.departement}
             >
-              <option value="">Sélectionnez un arrondissement</option>
+              <option value="">{t.selectDistrict}</option>
                 {Array.isArray(getArrondissements()) && getArrondissements().map((arr) => (
                     <option key={arr} value={arr}>
                     {arr}
@@ -167,10 +205,9 @@ const PollingStationModal = ({
             </select>
           </div>
 
-          {/* Capacité */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Capacité
+              {t.capacity}
             </label>
             <input
               type="number"
@@ -182,19 +219,18 @@ const PollingStationModal = ({
             />
           </div>
 
-          {/* Statut */}
           <div>
             <label className={`block text-left mb-1 ${themeClasses.text}`}>
-              Statut
+              {t.status}
             </label>
             <select
               value={formData.statut}
               onChange={(e) => setFormData({ ...formData, statut: e.target.value })}
               className={`w-full px-3 py-2 rounded-lg border ${themeClasses.border} ${themeClasses.cardBg} ${themeClasses.text}`}
             >
-              <option value="actif">Actif</option>
-              <option value="en-preparation">En préparation</option>
-              <option value="inactif">Inactif</option>
+              <option value="actif">{tr.active}</option>
+              <option value="en-preparation">{tr.preparation}</option>
+              <option value="inactif">{tr.inactive}</option>
             </select>
           </div>
 
@@ -205,7 +241,7 @@ const PollingStationModal = ({
               onClick={onClose}
               className={`px-4 py-2 rounded-lg border ${themeClasses.text} ${themeClasses.border} ${themeClasses.hover}`}
             >
-              Annuler
+              {t.cancel}
             </button>
             <button
               type="submit"

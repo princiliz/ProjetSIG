@@ -9,16 +9,20 @@ import {
   Shield,
   LogOut,
   Menu,
-  X
+  X,
+  Globe
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import PollingStations from './PollingStations';
+import Results from './results/Results';
+import PollWorkers from './PollWorkers';
+import { translations } from '../translations';
 
-// Layout principal de l'admin
 const AdminDashboard = () => {
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeSection, setActiveSection] = useState('bureaux');
+  const [language, setLanguage] = useState('fr'); // fr pour français, en pour anglais
 
   const themeClasses = {
     mainBg: isDark ? 'bg-slate-900' : 'bg-slate-50',
@@ -31,20 +35,28 @@ const AdminDashboard = () => {
   };
 
   const navigationItems = [
-    { id: 'bureaux', label: 'Bureaux de vote', icon: Layout },
-    { id: 'resultats', label: 'Résultats', icon: BarChart3 },
-    { id: 'scrutateurs', label: 'Scrutateurs', icon: Users },
-    { id: 'centres', label: 'Centres de vote', icon: BoxIcon },
-    { id: 'securite', label: 'Sécurité', icon: Shield },
-    { id: 'parametres', label: 'Paramètres', icon: Settings },
+    { id: 'bureaux', label: translations[language].bureaux, icon: Layout },
+    { id: 'resultats', label: translations[language].resultats, icon: BarChart3 },
+    { id: 'scrutateurs', label: translations[language].scrutateurs, icon: Users },
+    { id: 'centres', label: translations[language].centres, icon: BoxIcon },
+    { id: 'securite', label: translations[language].securite, icon: Shield },
+    { id: 'parametres', label: translations[language].parametres, icon: Settings },
   ];
+
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'fr' ? 'en' : 'fr');
+  };
 
   const renderContent = () => {
     switch (activeSection) {
       case 'bureaux':
-        return <PollingStations themeClasses={themeClasses} />;
+        return <PollingStations language={language} translations={translations} themeClasses={themeClasses} />;
+      case 'resultats':
+        return <Results language={language} translations={translations} themeClasses={themeClasses} />;
+      case 'scrutateurs':
+        return <PollWorkers language={language} translations={translations} themeClasses={themeClasses} />;
       default:
-        return <PollingStations themeClasses={themeClasses} />;
+        return <PollingStations language={language} translations={translations} themeClasses={themeClasses} />;
     }
   };
 
@@ -62,7 +74,9 @@ const AdminDashboard = () => {
         <div className="p-4 border-b flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Shield className="h-8 w-8 text-teal-500" />
-            <span className={`text-lg font-bold ${themeClasses.text}`}>Admin Electoral</span>
+            <span className={`text-lg font-bold ${themeClasses.text}`}>
+              {translations[language].title}
+            </span>
           </div>
           <button 
             className="lg:hidden"
@@ -126,6 +140,16 @@ const AdminDashboard = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              {/* Language Toggle Button */}
+              <button
+                onClick={toggleLanguage}
+                className={`flex items-center space-x-2 px-3 py-1 rounded-lg ${themeClasses.hover}`}
+              >
+                <Globe className={`h-5 w-5 ${themeClasses.text}`} />
+                <span className={`font-medium ${themeClasses.text}`}>
+                  {translations[language].currentLang}
+                </span>
+              </button>
               <ThemeToggle 
                 isDark={isDark} 
                 onToggle={() => setIsDark(!isDark)}
@@ -133,7 +157,9 @@ const AdminDashboard = () => {
               />
               <button className="flex items-center space-x-2 text-red-500 hover:text-red-600">
                 <LogOut className="h-5 w-5" />
-                <span className="hidden sm:inline">Déconnexion</span>
+                <span className="hidden sm:inline">
+                  {translations[language].deconnexion}
+                </span>
               </button>
             </div>
           </div>

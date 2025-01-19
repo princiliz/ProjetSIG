@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   ClipboardCheck, 
   Upload, 
   AlertTriangle, 
   Check, 
+  LogOut,
   ChevronDown,
   Edit2,
   Save,
@@ -26,6 +27,11 @@ const ResultsEntryPage = () => {
     ]
   });
   const [uploadedFile, setUploadedFile] = useState(null);
+  const handleUploadPV = useCallback((event) => {
+      const file = event.target.files[0];
+      // Logique de téléversement à implémenter
+      console.log('Uploading file:', file);
+    }, []);
 
   // Classes dynamiques basées sur le thème
   const themeClasses = {
@@ -64,6 +70,12 @@ const ResultsEntryPage = () => {
             <Save className="h-4 w-4" />
             <span>Sauvegarder</span>
           </button>
+          <button className="flex items-center space-x-2 text-red-500 hover:text-red-600">
+        <LogOut className="h-5 w-5" />
+        <span className="hidden sm:inline">
+          Deconnexion
+        </span>
+      </button>
         </div>
       </header>
 
@@ -141,7 +153,15 @@ const ResultsEntryPage = () => {
                   Format PDF ou image (max 10MB)
                 </p>
                 <button className="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg">
-                  Parcourir
+                  <label className='cursor-pointer'>
+                    Parcourir
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleUploadPV}
+                    />
+                  </label>
                 </button>
               </div>
             )}
